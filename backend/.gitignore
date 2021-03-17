@@ -1,3 +1,6 @@
 /node_modules
 /.env
 /.env-dont-send
+/.env-send-this-one
+/docs
+/test.rest
