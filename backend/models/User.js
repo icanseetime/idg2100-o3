@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    firstName: {
+    name: {
         type: String,
         required: true
     },
-    lastName: {
+    surname: {
         type: String,
         required: true
     },
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         enum: ['on-campus', 'home-office'],
         required: false
     },
-    availability: {
+    status: {
         type: String,
         enum: ['available', 'busy'],
         required: false

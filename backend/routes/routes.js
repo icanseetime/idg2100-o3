@@ -12,17 +12,17 @@ const createUser = async (req, res) => {
 
         // Create user
         const newUser = new User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
+            name: req.body.name,
+            surname: req.body.surname,
             email: req.body.email,
             password: securePass,
             role: req.body.role
         })
 
-        // Add location/availability for teachers
+        // Add location/status for teachers
         if (req.body.role === 'Teacher') {
             newUser.place = 'home-office'
-            newUser.availability = 'busy'
+            newUser.status = 'busy'
         }
 
         // Save to DB & send response to client-side
