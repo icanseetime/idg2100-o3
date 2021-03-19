@@ -3,34 +3,48 @@ const bcrypt = require('bcrypt')
 // DB Schemas
 const User = require('../models/User')
 
+// GET : Get all users
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+        res.status(200).json(users)
+    } catch (error) {
+        res.status(500).json(`Something went wrong while trying to find users.`)
+    }
+}
+
+const getByRole = async (req, res) => {
+    try {
+        const users = await User.find({ role: req.params.role.toLowerCase() })
+        res.status(200).json(users)
+    } catch (error) {
+        res.status(500).json(`Something went wrong while trying to find users with role ${req.params.role}`)
+    }
+}
+
 // POST: Create new user
 const createUser = async (req, res) => {
     try {
-        // Generate secure password
-        const salt = await bcrypt.genSalt()
-        const securePass = await bcrypt.hash(req.body.matchingPasswords, salt)
-
         // Create user
         const newUser = new User({
             name: req.body.name,
             surname: req.body.surname,
             email: req.body.email,
-            password: securePass,
+            password: req.body.password,
             role: req.body.role
         })
 
         // Add location/status for teachers
-        if (req.body.role === 'Teacher') {
+        if (req.body.role === 'teacher') {
             newUser.place = 'home-office'
             newUser.status = 'busy'
         }
 
         // Save to DB & send response to client-side
-        await newUser.save()
-        let answer = { redirect: '/login' }
-        res.status(201).json(answer)
+        const user = await newUser.save()
+        res.status(201).json({ message: 'New user successfully created.', user: user })
     } catch (err) {
-        res.status(500).json(`There was an error adding ${req.body.email} to the database. \n ${err} \n ${req}`)
+        res.status(500).json({ message: `There was an error adding ${req.body.email} to the database.`, error: `${err}` })
     }
 }
 
@@ -75,7 +89,7 @@ const validateUser = async (req, res) => {
 // GET: Get list of all users
 const getTeachers = async (req, res) => {
     try {
-        let users = await User.find({ role: 'Teacher' })
+        let users = await User.find({ role: 'teacher' })
         if (users.length) {
             res.status(200).json(users)
         } else {
@@ -87,6 +101,8 @@ const getTeachers = async (req, res) => {
 }
 
 module.exports = {
+    getAllUsers,
+    getByRole,
     createUser,
     findUser,
     validateUser,

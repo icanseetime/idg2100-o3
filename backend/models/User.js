@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
-const userSchema = new mongoose.Schema({
+const User = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -19,7 +20,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['Student', 'Teacher'],
+        enum: ['student', 'teacher'],
         required: true,
     },
     place: {
@@ -34,4 +35,21 @@ const userSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('User', userSchema)
+// Middleware
+User.pre('save', async function (next) {
+    // Check that user with this e-mail doesn't exist in DB
+    let existingUser = await this.constructor.findOne({ email: this.email })
+    if (existingUser) {
+        next(new Error('User with this email already exists in the database.'))
+    }
+
+    // Encrypt password before saving to DB
+    const salt = await bcrypt.genSalt()
+    await bcrypt.hash(this.password, salt)
+})
+
+User.methods.validPassword = async (password) => {
+    return await bcrypt.compare(password, user.password)
+}
+
+module.exports = mongoose.model('User', User)
