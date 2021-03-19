@@ -22,12 +22,18 @@ mongoose.connect(process.env.DATABASE_URL, {
     useFindAndModify: false
 })
 const db = mongoose.connection
-db.on('error', error => console.error(error))
-db.on('open', () => console.log('Connected to NTNU database'))
+db.on('error', error => console.error('❌ Mongoose DB connection\n', error))
+db.on('open', () => console.log('✅ Mongoose DB connection'))
 
 // Routes
-app.use('/api', apiRouter)
-app.use('/api/users', userRouter)
+app.use('/api', apiRouter) // Main API endpoint
+app.use('/api/users', userRouter) // User endpoint
+
+// Error handling
+app.use((err, req, res, next) => {
+    res.status(err.status || 500)
+    res.json({ error: `${err}` })
+})
 
 // Server
-app.listen(process.env.PORT || 5000, () => console.log(`Server listening on port ${process.env.PORT || 5000}...`))
+app.listen(process.env.PORT || 5000, () => console.log(`✅ Server running [👂:${process.env.PORT}]`))
