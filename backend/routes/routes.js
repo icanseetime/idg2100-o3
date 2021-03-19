@@ -1,37 +1,52 @@
+// Packages
 const bcrypt = require('bcrypt')
+const generator = require('generate-password')
 
 // DB Schemas
 const User = require('../models/User')
 
-// GET : Get all users
-const getAllUsers = async (req, res) => {
+const getUsers = async (req, res) => {
     try {
-        const users = await User.find()
-        res.status(200).json(users)
+        const users = await User.find(req.query)
+        if (users.length) {
+            res.status(200).json(users)
+        } else {
+            res.status(404).json({ error: 'Could not find any users.' })
+        }
     } catch (error) {
         res.status(500).json(`Something went wrong while trying to find users.`)
     }
 }
 
-const getByRole = async (req, res) => {
+const getByEmail = async (req, res) => {
     try {
-        const users = await User.find({ role: req.params.role.toLowerCase() })
-        res.status(200).json(users)
-    } catch (error) {
-        res.status(500).json(`Something went wrong while trying to find users with role ${req.params.role}`)
+        const user = await User.findOne({ email: req.params.email })
+        if (user) {
+            res.status(200).json(user)
+        } else {
+            res.status(404).json({ error: 'User not found.' })
+        }
+    } catch (err) {
+        res.status(500).json({ error: `Something went wrong while looking for user with email ${req.params.email}.` })
     }
 }
 
 // POST: Create new user
 const createUser = async (req, res) => {
     try {
-        // Create user
+        // Check that user e-mail does not exist in DB
+        let existingUser = await User.findOne({ email: req.body.email })
+        if (existingUser) {
+            res.status(409).json({ error: 'User with this email already exists in the database.' })
+        }
+
+        // Create user object
         const newUser = new User({
-            name: req.body.name,
-            surname: req.body.surname,
-            email: req.body.email,
-            password: req.body.password,
-            role: req.body.role
+            name: req.body.name.trim(),
+            surname: req.body.surname.trim(),
+            email: req.body.email.trim(),
+            password: req.body.password.trim(),
+            role: req.body.role.trim()
         })
 
         // Add location/status for teachers
@@ -48,63 +63,92 @@ const createUser = async (req, res) => {
     }
 }
 
-// GET: Check if user exists by email
-const findUser = async (req, res) => {
-    try {
-        // Find user by e-mail
-        let user = await User.find({ email: req.query.email })
-        if (user.length) {
-            res.status(200).json({ successMessage: `An e-mail has been sent to ${req.query.email}. Please check your e-mail to reset your password.` })
-        } else {
-            res.status(400).json({ errorMessage: `We couldn't find a user with the e-mail address ${req.query.email}. Please try again.` })
-        }
-    } catch (err) {
-        res.status(500).json(err)
-    }
-}
+// // GET: Log in user
+// const validateUser = async (req, res) => {
+//     try {
+//         // Check if user exists
+//         let user = await User.findOne({ email: req.body.email })
+//         if (user) {
+//             // Check if input password matches encrypted user password
+//             if (await bcrypt.compare(req.body.password, user.password)) {
+//                 let answer = { localStorage: 'userAuth', redirect: '/user' }
+//                 res.status(200).json(answer)
+//             } else {
+//                 let answer = { errorMessage: 'Wrong password. Please try again.' }
+//                 res.json(answer)
+//             }
+//         } else {
+//             let answer = { errorMessage: 'Wrong e-mail address and/or password. Please try again.' }
+//             res.json(answer)
+//         }
+//     } catch (err) {
+//         res.status(500).json(err)
+//     }
+// }
 
-// GET: Log in user
-const validateUser = async (req, res) => {
+const updateUserDetails = async (req, res) => {
     try {
-        // Check if user exists
-        let user = await User.findOne({ email: req.body.email })
-        if (user) {
-            // Check if input password matches encrypted user password
-            if (await bcrypt.compare(req.body.password, user.password)) {
-                let answer = { localStorage: 'userAuth', redirect: '/user' }
-                res.status(200).json(answer)
+        // Make sure request doesn't include password
+        if (!req.body.password) {
+            // Update user and get response
+            const user = await User.updateOne({ email: req.params.email }, req.body)
+            // Check for found/updated user and send response to client
+            if (!user.n) {
+                res.status(404).json({ error: `Could not find a user with the e-mail address ${req.params.email}.` })
+            } else if (!user.nModified) {
+                res.status(409).json({ error: `Could not modify user with e-mail address ${req.params.email}. Please check update values and try again.` })
             } else {
-                let answer = { errorMessage: 'Wrong password. Please try again.' }
-                res.json(answer)
+                res.status(201).json({ message: `User with e-mail ${req.params.email} was successfully updated.` })
             }
         } else {
-            let answer = { errorMessage: 'Wrong e-mail address and/or password. Please try again.' }
-            res.json(answer)
+            res.status(403).json({ error: `You should not include user passwords in your request. These can only be changed by the users themselves.` })
         }
     } catch (err) {
-        res.status(500).json(err)
+        res.status(500).json({ error: `Something went wrong while trying to update the user: ${err}` })
     }
 }
 
-// GET: Get list of all users
-const getTeachers = async (req, res) => {
+const createTempPass = async (req, res) => {
     try {
-        let users = await User.find({ role: 'teacher' })
-        if (users.length) {
-            res.status(200).json(users)
+        // Check if user exists
+        let user = await User.findOne({ email: req.params.email })
+        if (user) {
+            // Generate random temporary password
+            const newPass = generator.generate({
+                length: 8,
+                numbers: true
+            })
+            user.password = newPass
+            await user.save()
+            res.status(201).json({ message: `Your new password is ${newPass}. Please log in and change the password immediately.` })
         } else {
-            res.json({ errorMessage: 'No users found in database.' })
+            res.status(400).json({ error: `Couldn't find user with this e-mail address.` })
         }
     } catch (err) {
-        res.status(500).json(err)
+        res.status(500).json({ message: `Something went wrong while trying to reset the password.` })
+    }
+}
+
+const deleteUser = async (req, res) => {
+    try {
+        // Check that user e-mail does not exist in DB
+        let existingUser = await User.findOne({ email: req.params.email })
+        if (existingUser) {
+            await User.deleteOne({ email: req.params.email })
+            res.status(200).json({ message: `User with e-mail ${req.params.email} deleted successfully.` })
+        } else {
+            res.status(404).json({ error: 'There is no user with this e-mail in the database.' })
+        }
+    } catch (err) {
+        res.status(500).json({ error: `Something went wrong while trying to delete the user.` })
     }
 }
 
 module.exports = {
-    getAllUsers,
-    getByRole,
+    getUsers,
+    getByEmail,
     createUser,
-    findUser,
-    validateUser,
-    getTeachers
+    updateUserDetails,
+    createTempPass,
+    deleteUser
 }

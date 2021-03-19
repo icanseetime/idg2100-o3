@@ -37,19 +37,13 @@ const User = new mongoose.Schema({
 
 // Middleware
 User.pre('save', async function (next) {
-    // Check that user with this e-mail doesn't exist in DB
-    let existingUser = await this.constructor.findOne({ email: this.email })
-    if (existingUser) {
-        next(new Error('User with this email already exists in the database.'))
-    }
-
     // Encrypt password before saving to DB
     const salt = await bcrypt.genSalt()
-    await bcrypt.hash(this.password, salt)
+    this.password = await bcrypt.hash(this.password, salt)
 })
 
 User.methods.validPassword = async (password) => {
-    return await bcrypt.compare(password, user.password)
+    return await bcrypt.compare(password, this.password)
 }
 
 module.exports = mongoose.model('User', User)

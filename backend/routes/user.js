@@ -6,32 +6,29 @@ const routes = require('./routes')
 // ----- GET -----
 
 // Get all users
-router.get('/', routes.getAllUsers)
+router.get('/', routes.getUsers)
 
-// Get users by specific role
-router.get('/:role', routes.getByRole)
-
-// Get list of all teachers
-router.get('/teachers', routes.getTeachers) //TODO: rewrite to pick from specific role
-
-// "Get new password"
-router.get('/reset-password', routes.findUser)
-
+// Get specific user (by e-mail as unique identifier)
+router.get('/:email', routes.getByEmail)
 
 // ----- POST -----
 // Create new user
 router.post('/new', routes.createUser)
 
 // Log in user
-router.post('/login', routes.validateUser)
+// router.post('/login', routes.validateUser)
 
 
 // ----- PUT -----
+// Update user details
+router.put('/:email/update', routes.updateUserDetails)
 
+// Create new temporary password
+router.put('/:email/reset-password', routes.createTempPass)
 
 
 // ----- DELETE -----
-
+router.delete('/:email/delete', routes.deleteUser)
 
 
 module.exports = router
