@@ -5,9 +5,8 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
+const passport = require('passport')
 const cors = require('cors')
-
-const passport = require('passport') // TODO
 
 // Routers
 const apiRouter = require('./routes/index')
@@ -16,11 +15,8 @@ const userRouter = require('./routes/users')
 // Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(cors())
-
-// TODO
-require('./auth/auth')
 app.use(passport.initialize())
+app.use(cors())
 
 // Database connection
 mongoose.connect(process.env.DATABASE_URL, {
@@ -33,7 +29,7 @@ const db = mongoose.connection
 db.on('error', error => console.error('❌ Mongoose DB connection\n', error))
 db.on('open', () => console.log('✅ Mongoose DB connection'))
 
-// Routes
+// Main endpoints
 app.use('/api', apiRouter) // Main API endpoint
 app.use('/api/users', userRouter) // Users endpoint
 

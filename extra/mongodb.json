@@ -1,0 +1,57 @@
+[{
+  "_id": {
+    "$oid": "60562136b6d8db18a8afc377"
+  },
+  "name": "Mad",
+  "surname": "Hatter",
+  "email": "madhatter@wonderland.com.au",
+  "password": "$2b$10$zhOr/Xnzb3IzmEVr5vmB6OL3CZwQo8Jf2eV4IpmuDbRAXhEx5W2JS",
+  "role": "teacher",
+  "place": "home-office",
+  "status": "busy",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "60565e4c1a3226539024e2ec"
+  },
+  "name": "White",
+  "surname": "Rabbit",
+  "email": "ontime@always.com",
+  "password": "$2b$10$iAirrlVwm0voLlKZE9zv5u92.Ja6Z9TI3Va5plIYHZvVSwOGLoxeG",
+  "role": "student",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "605661301a3226539024e2ed"
+  },
+  "name": "Cheshire",
+  "surname": "Cat",
+  "email": "nowyouseeme@outlook.com",
+  "password": "$2b$10$ifPjifHq599dktWNRQsxfOtdzRGwLMn/rMzmHpc48Q2g3WdmEuK6m",
+  "role": "teacher",
+  "place": "home-office",
+  "status": "busy",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "605661901a3226539024e2ee"
+  },
+  "name": "The",
+  "surname": "Caterpillar",
+  "email": "hookahboy420@pm.me",
+  "password": "$2b$10$Me4J5fVR9nuc3OwQOmMKeeHAqFe351Spuibzka813s.rbp6qM1edW",
+  "role": "teacher",
+  "place": "home-office",
+  "status": "busy",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "605661bb1a3226539024e2ef"
+  },
+  "name": "March",
+  "surname": "Hare",
+  "email": "tea@cup.now",
+  "password": "$2b$10$e/f283kSgxStM38b04F2q.nsxOngLqbR3jsSqFcSzBacMp8b/tc9.",
+  "role": "student",
+  "__v": 0
+}]

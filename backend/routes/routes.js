@@ -1,5 +1,4 @@
 // Packages
-const bcrypt = require('bcrypt')
 const generator = require('generate-password')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
@@ -7,6 +6,7 @@ const jwt = require('jsonwebtoken')
 // DB Schemas
 const User = require('../models/User')
 
+// GET: Find group of users - all or all matching query
 const getUsers = async (req, res) => {
     try {
         const users = await User.find(req.query)
@@ -15,11 +15,12 @@ const getUsers = async (req, res) => {
         } else {
             res.status(404).json({ error: 'Could not find any users.' })
         }
-    } catch (error) {
-        res.status(500).json(`Something went wrong while trying to find users.`)
+    } catch (err) {
+        res.status(500).json({ error: `Something went wrong while trying to find users. [${err}]` })
     }
 }
 
+// GET: Get info about specific user by e-mail
 const getByEmail = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.params.email })
@@ -29,7 +30,7 @@ const getByEmail = async (req, res) => {
             res.status(404).json({ error: 'User not found.' })
         }
     } catch (err) {
-        res.status(500).json({ error: `Something went wrong while looking for user with email ${req.params.email}.` })
+        res.status(500).json({ error: `Something went wrong while looking for user with email ${req.params.email}. [${err}]` })
     }
 }
 
@@ -39,7 +40,7 @@ const createUser = async (req, res) => {
         // Check that user e-mail does not exist in DB
         let existingUser = await User.findOne({ email: req.body.email })
         if (existingUser) {
-            res.status(409).json({ error: 'User with this email already exists in the database.' })
+            res.status(409).json({ error: `A user with this email already exists in the database.` })
         }
 
         // Create user object
@@ -61,15 +62,13 @@ const createUser = async (req, res) => {
         const user = await newUser.save()
         res.status(201).json({ message: 'New user successfully created.', user: user })
     } catch (err) {
-        res.status(500).json({ message: `There was an error adding ${req.body.email} to the database.`, error: `${err}` })
+        res.status(500).json({ error: `There was an error adding ${req.body.email} to the database. [${err}]` })
     }
 }
 
-// // GET: Log in user
+// GET: Log in user
 const loginUser = async (req, res, next) => {
-    console.log(req.body)
     passport.authenticate('local', async (err, user, info) => {
-        console.log(err, user, info)
         try {
             if (err || !user) {
                 const error = err ? new Error(err) : new Error(info.error)
@@ -79,19 +78,19 @@ const loginUser = async (req, res, next) => {
                     if (error) {
                         return next(error)
                     }
-
                     // Generate and return JWT
                     const body = { _id: user._id, email: user.email, role: user.role }
                     const token = jwt.sign({ user: body }, process.env.TOKEN_SECRET)
                     return res.json({ token })
                 })
             }
-        } catch (error) {
+        } catch (err) {
             res.status(500).json(err)
         }
     })(req, res, next)
 }
 
+// PUT: Update user details (except password!)
 const updateUserDetails = async (req, res) => {
     try {
         // Make sure request doesn't include password
@@ -110,10 +109,11 @@ const updateUserDetails = async (req, res) => {
             res.status(403).json({ error: `You should not include user passwords in your request. These can only be changed by the users themselves.` })
         }
     } catch (err) {
-        res.status(500).json({ error: `Something went wrong while trying to update the user: ${err}` })
+        res.status(500).json({ error: `Something went wrong while trying to update the user. [${err}]` })
     }
 }
 
+// PUT: Create temporary password for user
 const createTempPass = async (req, res) => {
     try {
         // Check if user exists
@@ -128,13 +128,14 @@ const createTempPass = async (req, res) => {
             await user.save()
             res.status(201).json({ message: `Your new password is ${newPass}. Please log in and change the password immediately.` })
         } else {
-            res.status(400).json({ error: `Couldn't find user with this e-mail address.` })
+            res.status(400).json({ error: `Could not find a user with this e-mail address.` })
         }
     } catch (err) {
-        res.status(500).json({ message: `Something went wrong while trying to reset the password.` })
+        res.status(500).json({ message: `Something went wrong while trying to reset the password. [${err}]` })
     }
 }
 
+// DELETE: Delete specific user
 const deleteUser = async (req, res) => {
     try {
         // Check that user e-mail does not exist in DB
@@ -146,7 +147,7 @@ const deleteUser = async (req, res) => {
             res.status(404).json({ error: 'There is no user with this e-mail in the database.' })
         }
     } catch (err) {
-        res.status(500).json({ error: `Something went wrong while trying to delete the user.` })
+        res.status(500).json({ error: `Something went wrong while trying to delete the user. [${err}]` })
     }
 }
 
