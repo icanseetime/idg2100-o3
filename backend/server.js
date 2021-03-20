@@ -7,14 +7,22 @@ const app = express()
 const mongoose = require('mongoose')
 const cors = require('cors')
 
+const passport = require('passport') // TODO
+
 // Routers
 const apiRouter = require('./routes/index')
-const userRouter = require('./routes/user')
+const userRouter = require('./routes/users')
 
+// Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 
+// TODO
+require('./auth/auth')
+app.use(passport.initialize())
+
+// Database connection
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -27,7 +35,7 @@ db.on('open', () => console.log('✅ Mongoose DB connection'))
 
 // Routes
 app.use('/api', apiRouter) // Main API endpoint
-app.use('/api/users', userRouter) // User endpoint
+app.use('/api/users', userRouter) // Users endpoint
 
 // Error handling
 app.use((err, req, res, next) => {

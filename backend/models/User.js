@@ -36,14 +36,16 @@ const User = new mongoose.Schema({
 })
 
 // Middleware
-User.pre('save', async function (next) {
+User.pre('save', async function () {
     // Encrypt password before saving to DB
     const salt = await bcrypt.genSalt()
     this.password = await bcrypt.hash(this.password, salt)
 })
 
-User.methods.validPassword = async (password) => {
-    return await bcrypt.compare(password, this.password)
+// Instance methods
+User.methods.validPassword = async (password, userPass) => {
+    // Validate password from DB against given password
+    return await bcrypt.compare(password, userPass)
 }
 
 module.exports = mongoose.model('User', User)

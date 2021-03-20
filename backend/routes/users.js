@@ -16,8 +16,7 @@ router.get('/:email', routes.getByEmail)
 router.post('/new', routes.createUser)
 
 // Log in user
-// router.post('/login', routes.validateUser)
-
+router.post('/login', routes.loginUser)
 
 // ----- PUT -----
 // Update user details

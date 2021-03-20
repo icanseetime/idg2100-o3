@@ -1,6 +1,8 @@
 // Packages
 const bcrypt = require('bcrypt')
 const generator = require('generate-password')
+const passport = require('passport')
+const jwt = require('jsonwebtoken')
 
 // DB Schemas
 const User = require('../models/User')
@@ -64,27 +66,31 @@ const createUser = async (req, res) => {
 }
 
 // // GET: Log in user
-// const validateUser = async (req, res) => {
-//     try {
-//         // Check if user exists
-//         let user = await User.findOne({ email: req.body.email })
-//         if (user) {
-//             // Check if input password matches encrypted user password
-//             if (await bcrypt.compare(req.body.password, user.password)) {
-//                 let answer = { localStorage: 'userAuth', redirect: '/user' }
-//                 res.status(200).json(answer)
-//             } else {
-//                 let answer = { errorMessage: 'Wrong password. Please try again.' }
-//                 res.json(answer)
-//             }
-//         } else {
-//             let answer = { errorMessage: 'Wrong e-mail address and/or password. Please try again.' }
-//             res.json(answer)
-//         }
-//     } catch (err) {
-//         res.status(500).json(err)
-//     }
-// }
+const loginUser = async (req, res, next) => {
+    console.log(req.body)
+    passport.authenticate('local', async (err, user, info) => {
+        console.log(err, user, info)
+        try {
+            if (err || !user) {
+                const error = err ? new Error(err) : new Error(info.error)
+                return next(error)
+            } else {
+                req.login(user, { session: false }, async (error) => {
+                    if (error) {
+                        return next(error)
+                    }
+
+                    // Generate and return JWT
+                    const body = { _id: user._id, email: user.email, role: user.role }
+                    const token = jwt.sign({ user: body }, process.env.TOKEN_SECRET)
+                    return res.json({ token })
+                })
+            }
+        } catch (error) {
+            res.status(500).json(err)
+        }
+    })(req, res, next)
+}
 
 const updateUserDetails = async (req, res) => {
     try {
@@ -148,6 +154,7 @@ module.exports = {
     getUsers,
     getByEmail,
     createUser,
+    loginUser,
     updateUserDetails,
     createTempPass,
     deleteUser

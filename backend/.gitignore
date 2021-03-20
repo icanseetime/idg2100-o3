@@ -4,3 +4,4 @@
 /.env-send-this-one
 /docs
 /test.rest
+/test.js
