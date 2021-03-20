@@ -9,6 +9,7 @@ const formFields = {
     passwordField: 'password'
 }
 
+// Login strategy
 passport.use(new LocalStrategy(formFields, async (email, password, done) => {
     try {
         const user = await User.findOne({ email: email })
@@ -28,14 +29,35 @@ passport.use(new LocalStrategy(formFields, async (email, password, done) => {
     }
 }))
 
-passport.use(new JWTstrategy(
+// JWT verification strategies
+// All users
+passport.use('user', new JWTstrategy(
     {
         secretOrKey: process.env.TOKEN_SECRET,
-        jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken('token')
     },
     async (token, done) => {
         try {
             return done(null, token.user)
+        } catch (err) {
+            done(err)
+        }
+    }
+))
+
+// Teachers only
+passport.use('teacher', new JWTstrategy(
+    {
+        secretOrKey: process.env.TOKEN_SECRET,
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken('token')
+    },
+    async (token, done) => {
+        try {
+            if (token.user.role === 'teacher') {
+                return done(null, token.user)
+            } else {
+                return done(null, false)
+            }
         } catch (err) {
             done(err)
         }

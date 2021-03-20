@@ -44,11 +44,11 @@ const createUser = async (req, res) => {
 
         // Create user object
         const newUser = new User({
-            name: req.body.name.trim(),
-            surname: req.body.surname.trim(),
-            email: req.body.email.trim(),
-            password: req.body.password.trim(),
-            role: req.body.role.trim()
+            name: req.body.name,
+            surname: req.body.surname,
+            email: req.body.email,
+            password: req.body.password,
+            role: req.body.role
         })
 
         // Add location/status for teachers
