@@ -61,14 +61,14 @@ _- Ida M. R. Gjeitsund_
 
 | Method | Endpoint                   | Functionality                                                                | Access               |
 | ------ | -------------------------- | ---------------------------------------------------------------------------- | -------------------- |
-| GET    | /api                       | Top level of API, no specific functionality [\*](#comments)                  | Unauthorized         |
+| GET    | /api                       | Top level of API, no specific functionality [\*](#comments)                  | No auth              |
 | GET    | /api/users                 | User collection, search for all users or collections of users based on query | All authorized users |
 | GET    | /api/users/:email          | Find information about specific user by their e-mail                         | All authorized users |
 | PUT    | /api/users/:email          | Update any user details (except password)                                    | Teachers             |
-| PUT    | /api/users/:email/password | Set temporary password in DB and retrieve it in plain-text [\*\*](#comments) | Unauthorized         |
+| PUT    | /api/users/:email/password | Set temporary password in DB and retrieve it in plain-text [\*\*](#comments) | No auth              |
 | DELETE | /api/users/:email          | Delete specific user by e-mail                                               | Teachers             |
-| POST   | /api/users/new             | Register new user                                                            | Unauthorized         |
-| POST   | /api/users/login           | Log in user, get JWT back                                                    | Unauthorized         |
+| POST   | /api/users/new             | Register new user                                                            | No auth              |
+| POST   | /api/users/login           | Log in user, get JWT back                                                    | No auth              |
 
 ---
 
