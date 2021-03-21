@@ -27,7 +27,7 @@
   "name": "Cheshire",
   "surname": "Cat",
   "email": "nowyouseeme@outlook.com",
-  "password": "$2b$10$ifPjifHq599dktWNRQsxfOtdzRGwLMn/rMzmHpc48Q2g3WdmEuK6m",
+  "password": "$2b$10$xInIJpJOzywaDwSHTW5djeeiBhFVmUTwWej2/l6CATobDaO7gv.gO",
   "role": "teacher",
   "place": "home-office",
   "status": "busy",
@@ -36,7 +36,7 @@
   "_id": {
     "$oid": "605661901a3226539024e2ee"
   },
-  "name": "The",
+  "name": "Blue",
   "surname": "Caterpillar",
   "email": "hookahboy420@pm.me",
   "password": "$2b$10$Me4J5fVR9nuc3OwQOmMKeeHAqFe351Spuibzka813s.rbp6qM1edW",

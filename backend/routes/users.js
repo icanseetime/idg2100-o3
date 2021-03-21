@@ -22,15 +22,15 @@ router.post('/login', routes.loginUser)
 
 // ----- PUT -----
 // Update user details
-router.put('/:email/update', passport.authenticate('teacher', { session: false }), routes.updateUserDetails)
+router.put('/:email', passport.authenticate('teacher', { session: false }), routes.updateUserDetails)
 
 // Create new temporary password
-router.put('/:email/reset-password', routes.createTempPass)
+router.put('/:email/password', routes.createTempPass)
 
 
 // ----- DELETE -----
 // Delete specific user
-router.delete('/:email/delete', passport.authenticate('teacher', { session: false }), routes.deleteUser)
+router.delete('/:email', passport.authenticate('teacher', { session: false }), routes.deleteUser)
 
 
 module.exports = router

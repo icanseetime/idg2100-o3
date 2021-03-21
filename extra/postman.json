@@ -6,103 +6,6 @@
 	},
 	"item": [
 		{
-			"name": "Top level of API",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{api}}",
-					"host": [
-						"{{api}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get all users",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{api}}/users",
-					"host": [
-						"{{api}}"
-					],
-					"path": [
-						"users"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Find specific user by email",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{api}}/users/test@ntnu.no",
-					"host": [
-						"{{api}}"
-					],
-					"path": [
-						"users",
-						"test@ntnu.no"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get all teachers",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{api}}/users/?role=teacher",
-					"host": [
-						"{{api}}"
-					],
-					"path": [
-						"users",
-						""
-					],
-					"query": [
-						{
-							"key": "role",
-							"value": "teacher"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get all students",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{api}}/users/?role=student",
-					"host": [
-						"{{api}}"
-					],
-					"path": [
-						"users",
-						""
-					],
-					"query": [
-						{
-							"key": "role",
-							"value": "student"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Create new user (student)",
 			"request": {
 				"auth": {
@@ -127,14 +30,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/api/users/new",
-					"protocol": "http",
+					"raw": "{{api}}/users/new",
 					"host": [
-						"localhost"
+						"{{api}}"
 					],
-					"port": "5000",
 					"path": [
-						"api",
 						"users",
 						"new"
 					]
@@ -143,73 +43,7 @@
 			"response": []
 		},
 		{
-			"name": "Update user details",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"surname\": \"Funkis\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{api}}/users/heisann@test.no/update",
-					"host": [
-						"{{api}}"
-					],
-					"path": [
-						"users",
-						"heisann@test.no",
-						"update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Reset password for specific user",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "{{api}}/users/test2@ntnu.no/reset-password",
-					"host": [
-						"{{api}}"
-					],
-					"path": [
-						"users",
-						"test2@ntnu.no",
-						"reset-password"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete specific user",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{api}}/users/imrg@protonmail.com/delete",
-					"host": [
-						"{{api}}"
-					],
-					"path": [
-						"users",
-						"imrg@protonmail.com",
-						"delete"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Login",
+			"name": "Login (teacher)",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -230,6 +64,254 @@
 					"path": [
 						"users",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login (student)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"curiouser@icloud.com\",\r\n    \"password\": \"bonkers4life\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api}}/users/login",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🔑 Get all users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{student-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/users",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🔑 Find specific user by email",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{student-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/users/ontime@always.com",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users",
+						"ontime@always.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🔑 Get all teachers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{student-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/users/?role=teacher",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users",
+						""
+					],
+					"query": [
+						{
+							"key": "role",
+							"value": "teacher"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🔑 Get all students",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{student-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/users/?role=student",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users",
+						""
+					],
+					"query": [
+						{
+							"key": "role",
+							"value": "student"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "👨‍🏫 Update user details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{teacher-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"surname\": \"Butterfly\",\r\n    \"email\": \"whoareyou@pm.me\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api}}/users/hookahboy420@pm.me",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users",
+						"hookahboy420@pm.me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset password for specific user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/users/tea@cup.now/password",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users",
+						"tea@cup.now",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "👨‍🏫 Delete specific user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{teacher-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/users/curiouser@icloud.com",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"users",
+						"curiouser@icloud.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top level of API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}",
+					"host": [
+						"{{api}}"
 					]
 				}
 			},
@@ -260,6 +342,14 @@
 		{
 			"key": "api",
 			"value": "http://localhost:5000/api"
+		},
+		{
+			"key": "student-token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwNTYxNjExYzg4MTIyMWRjNDJhZjZhMiIsImVtYWlsIjoieW9sb0BudG51Lm5vIiwicm9sZSI6InN0dWRlbnQifSwiaWF0IjoxNjE2MjcxODc0fQ.2RaJpwUVdezUeYHVwX4wonyqLfyLsArmS-BunRIEzu4"
+		},
+		{
+			"key": "teacher-token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwNTY2MTMwMWEzMjI2NTM5MDI0ZTJlZCIsImVtYWlsIjoibm93eW91c2VlbWVAb3V0bG9vay5jb20iLCJyb2xlIjoidGVhY2hlciJ9LCJpYXQiOjE2MTYzMzE1NzV9.TJ2Sx4GuXcDnFOxCAS94i8VCY8Cwie_1PuZNTouylCo"
 		}
 	]
 }

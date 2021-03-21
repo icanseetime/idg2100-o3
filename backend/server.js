@@ -6,6 +6,7 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const passport = require('passport')
+require('./auth/auth')
 const cors = require('cors')
 
 // Routers
