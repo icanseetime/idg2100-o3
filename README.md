@@ -9,7 +9,7 @@ _- Ida M. R. Gjeitsund_
 1. [How to run and test project](#how-to-run-and-test-project)
     - [Run](#run)
     - [Test](#test)
-2. [API](#api)
+2. [Information about API](#information-about-api)
     - [Technologies used](#technologies-used)
     - [Endpoints](#endpoints)
     - [File structure](#file-structure)
@@ -21,23 +21,23 @@ _- Ida M. R. Gjeitsund_
 
 ### Run
 
-1. Run `npm install` or `yarn install` from the root folder to install all packages
-2. Find the [.env](./backend/.env) file and replace the _DATABASE_URL_ local DB string with your own MongoDB connection string
-3. Create a new collection in MongoDB and import data from the [mongodb.json](./extra/mongodb.json) file
-4. Run `npm run devstart` or `yarn devstart` from root folder to start the server with nodemon
+1. Run `npm install` or `yarn install` from the **backend** folder to install all packages
+2. Create a new collection in MongoDB and import data from the [mongodb.json](./extra/mongodb.json) file
+3. Find the [.env](./backend/.env) file and replace the _DATABASE_URL_ local DB string with your own MongoDB connection string
+4. Run `npm run devstart` or `yarn devstart` from the **backend** folder to start the server with nodemon
 
 ### Test
 
-1. Import data from the [postman.json](./extra/postman.json) file into Postman
+1. Import collection from the [postman.json](./extra/postman.json) file into Postman
 2. **Run all requests in collection - in order**
-3. Tests marked with 🔑 require you to paste in JWT from any authorized user
-4. Tests marked with 👨‍🏫 require you to paste in JWT from an authorized user with teacher role
+3. Requests marked with 🔑 requires a JWT in the form of a Bearer token from any authorized user in the Authorization tab
+4. Requests marked with 👨‍🏫 requires a JWT from an authorized user with teacher role
 
 \*_Feel free to also run your own tests, I didn't include every possible option._
 
 ---
 
-## API
+## Information about API
 
 ### Technologies used
 
@@ -59,35 +59,47 @@ _- Ida M. R. Gjeitsund_
 
 ### Endpoints
 
-| Endpoint                         | Functionality                                                                | Access               |
-| -------------------------------- | ---------------------------------------------------------------------------- | -------------------- |
-| /api                             | Top level of API, no specific functionality [\*](#comments)                  | Unauthorized         |
-| /api/users                       | User collection, search for all users or collections of users based on query | All authorized users |
-| /api/users/:email                | Find information about specific user by their e-mail                         | All authorized users |
-| /api/users/:email/reset-password | Set temporary password in DB and retrieve it in plain-text [\*\*](#comments) | Unauthorized         |
-| /api/users/:email/update         | Update any user details (except password)                                    | Teachers             |
-| /api/users/:email/delete         | Delete specific user by e-mail                                               | Teachers             |
-| /api/users/new                   | Register new user                                                            | Unauthorized         |
-| /api/users/login                 | Log in user, get JWT back                                                    | Unauthorized         |
+| Method | Endpoint                   | Functionality                                                                | Access               |
+| ------ | -------------------------- | ---------------------------------------------------------------------------- | -------------------- |
+| GET    | /api                       | Top level of API, no specific functionality [\*](#comments)                  | Unauthorized         |
+| GET    | /api/users                 | User collection, search for all users or collections of users based on query | All authorized users |
+| GET    | /api/users/:email          | Find information about specific user by their e-mail                         | All authorized users |
+| PUT    | /api/users/:email          | Update any user details (except password)                                    | Teachers             |
+| PUT    | /api/users/:email/password | Set temporary password in DB and retrieve it in plain-text [\*\*](#comments) | Unauthorized         |
+| DELETE | /api/users/:email          | Delete specific user by e-mail                                               | Teachers             |
+| POST   | /api/users/new             | Register new user                                                            | Unauthorized         |
+| POST   | /api/users/login           | Log in user, get JWT back                                                    | Unauthorized         |
 
 ---
 
 #### Comments
 
-_\*I chose to have a top level /api and a sublevel /users, so that it would be possible to add other "collections" later_
+_\*I chose to have a top level /api and a sublevel /users, so that it would be possible to add other "collections" to the API later_
 
-_\*\* Not the best solution to send temporary passwords in plain-text, in a real app the customer would probably be sent an e-mail. But for the sake of having some sort of functionality for the "Forgot password"-section of the front-end, I decided to do it this way._
+_\*\* Definitely not an optimal solution to send temporary passwords in plain-text, in a real app the customer would probably be sent an e-mail where they could reset their password. But for the sake of having some sort of functionality for the "Forgot password"-section of the front-end, I decided to do it this way._
 
 ---
 
 ### File structure
 
+| Content                                      | Link(s)                                 |
+| -------------------------------------------- | --------------------------------------- |
+| Server setup                                 | [server.js](./backend/server.js)        |
+| Top-level API endpoint                       | [index.js](./backend/routes/index.js)   |
+| Users collection endpoint (w/ authorization) | [users.js](./backend/routes/users.js)   |
+| Routes (where the magic happens)             | [routes.js](./backend/routes/routes.js) |
+| Passport authorization setup                 | [auth.js](./backend/auth/auth.js)       |
+| Database schema and password validation      | [User.js](./backend/models/User.js)     |
+| Environment variables                        | [.env](./backend/.env)                  |
+
 ---
 
 ### Notes
 
--   CORS
--   :email instead of :\_id
+-   I have CORS installed and set up, because I realized I needed it when I set up the backend for Oblig 2. It's not necessary for this task, but for the sake of the "API remaining completely independent" I decided to leave it there.
+-   I've used the users :email instead of :\_id as identifiers on the endpoints, because it seemed easier to deal with for the client-side, but I've included both in the JWT, just in case.
+-   I chose not to create separate files for the routes that teachers have access to, all users have access to etc. I kept them in the same file since the endpoints are so similar, and I wanted to keep all /users routes in the same file. Instead, I used 2 different JWT strategies, and used them as middleware on the appropriate routes.
+-   There is almost no validation of passwords (like min 1 letter and 1 number) or checking of e-mail being a proper e-mail etc. I did that on the client-side in oblig2, so I made an assumption that it wasn't necessary.
 
 ---
 
