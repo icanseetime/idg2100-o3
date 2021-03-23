@@ -1,4 +1,4 @@
-# Oblig 3
+# Oblig 3 🕳🐇
 
 ## Content
 
@@ -99,4 +99,4 @@ _\*\* Definitely not an optimal solution to send temporary passwords in plain-te
 
 ---
 
-[Back to top](#oblig-3)
+🍰 [Back to top](#oblig-3-🕳🐇) 
