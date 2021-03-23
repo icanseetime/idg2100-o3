@@ -9,7 +9,8 @@ const User = require('../models/User')
 // GET: Find group of users - all or all matching query
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find(req.query)
+        // Find users (but do not return e-mail & password)
+        let users = await User.find(req.query).select('-email -password')
         if (users.length) {
             res.status(200).json(users)
         } else {
@@ -23,7 +24,7 @@ const getUsers = async (req, res) => {
 // GET: Get info about specific user by e-mail
 const getByEmail = async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.params.email })
+        const user = await User.findOne({ email: req.params.email }).select('-email -password')
         if (user) {
             res.status(200).json(user)
         } else {
