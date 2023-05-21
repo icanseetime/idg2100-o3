@@ -1,5 +1,8 @@
 # Oblig 3 🕳🐇
 
+Backend for the application "Campus Tracker" which allows tracking of whether a student is available/busy and working from campus/home office. 
+Database connection, basic authentication and role assignment, as a CRUD api, written on NodeJS, with Express, and MongoDB/mongoose.
+
 ## Content
 
 1. [How to run and test project](#how-to-run-and-test-project)
